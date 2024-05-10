@@ -7,15 +7,9 @@
       var txtInput = document.querySelector('#txtInput');
       var btnSpeak = document.querySelector('#btnSpeak');
       var synth = window.speechSynthesis;
-      var voices = [];
       var weeks = {
         week1: ["friend", "neighbor"]
       };
-
-      function populateVoices(){
-        voices = synth.getVoices();
-        voices.forEach((item, index) => console.log(item.name, index));
-      }
 
       function populateWeekList() {
         var sel = document.getElementById('selectWeek');
@@ -28,15 +22,10 @@
       }
 
       document.addEventListener("DOMContentLoaded", function() {
-        populateVoices();
+        populateWeekList();
       
-        if (speechSynthesis !== undefined){
-          speechSynthesis.onvoiceschanged = populateVoices;
-        }
-
         btnSpeak.addEventListener('click', ()=> {
           var toSpeak = new SpeechSynthesisUtterance(txtInput.textContent);
-          toSpeak.voice = voices[7]; // Spanish
           synth.speak(toSpeak);
         });
 
