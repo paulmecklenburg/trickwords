@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Trick Words Practice</title>
+    <script type="text/javascript">
+      var txtInput = document.querySelector('#txtInput');
+      var btnSpeak = document.querySelector('#btnSpeak');
+      var synth = window.speechSynthesis;
+      var voices = [];
+
+      PopulateVoices();
+      if (speechSynthesis !== undefined){
+        speechSynthesis.onvoiceschanged = PopulateVoices;
+      }
+
+      btnSpeak.addEventListener('click', ()=> {
+        var toSpeak = new SpeechSynthesisUtterance(txtInput.textContent);
+        toSpeak.voice = voices[7]; // Spanish
+        synth.speak(toSpeak);
+      });
+
+      function PopulateVoices(){
+        voices = synth.getVoices();
+        voices.forEach((item, index) => console.log(item.name, index));
+      }
+    </script>
+  </head>
+  <body>
+    <p id="txtInput">Speak this text</p>
+    <button id='btnSpeak'>Speak!</button>
+  </body>
+</html>
