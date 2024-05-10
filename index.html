@@ -31,7 +31,7 @@
         populateVoices();
       
         if (speechSynthesis !== undefined){
-          speechSynthesis.onvoiceschanged = PopulateVoices;
+          speechSynthesis.onvoiceschanged = populateVoices;
         }
 
         btnSpeak.addEventListener('click', ()=> {
