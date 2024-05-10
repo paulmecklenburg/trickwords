@@ -8,30 +8,48 @@
       var btnSpeak = document.querySelector('#btnSpeak');
       var synth = window.speechSynthesis;
       var voices = [];
+      var weeks = {
+        week1: ["friend", "neighbor"]
+      };
 
-      PopulateVoices();
-      if (speechSynthesis !== undefined){
-        speechSynthesis.onvoiceschanged = PopulateVoices;
-      }
-
-      btnSpeak.addEventListener('click', ()=> {
-        var toSpeak = new SpeechSynthesisUtterance(txtInput.textContent);
-        toSpeak.voice = voices[7]; // Spanish
-        synth.speak(toSpeak);
-      });
-
-      function PopulateVoices(){
+      function populateVoices(){
         voices = synth.getVoices();
         voices.forEach((item, index) => console.log(item.name, index));
       }
 
-      document.addEventListener("keypress", function onEvent(event) {
-        console.log(event.key);
+      function populateWeekList() {
+        var sel = document.getElementById('selectWeek');
+        for (const k of Object.keys(weeks)) {
+          var opt = document.createElement('option');
+          opt.value = k;
+          opt.innerHTML = k;
+          sel.appendChild(opt);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        populateVoices();
+      
+        if (speechSynthesis !== undefined){
+          speechSynthesis.onvoiceschanged = PopulateVoices;
+        }
+
+        btnSpeak.addEventListener('click', ()=> {
+          var toSpeak = new SpeechSynthesisUtterance(txtInput.textContent);
+          toSpeak.voice = voices[7]; // Spanish
+          synth.speak(toSpeak);
+        });
+
+        document.addEventListener("keypress", function onEvent(event) {
+          console.log(event.key);
+        });
       });
     </script>
   </head>
   <body>
     <p id="txtInput">Speak this text</p>
     <button id='btnSpeak'>Speak!</button>
+    <select name="selectWeek" id="selectWeek">
+    </select>
   </body>
 </html>
