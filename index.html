@@ -24,6 +24,10 @@
         voices = synth.getVoices();
         voices.forEach((item, index) => console.log(item.name, index));
       }
+
+      document.addEventListener("keypress", function onEvent(event) {
+        console.log(event.key);
+      });
     </script>
   </head>
   <body>
