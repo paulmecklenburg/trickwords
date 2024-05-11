@@ -1,44 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Trick Words Practice</title>
-    <script type="text/javascript">
-      var txtInput = document.querySelector('#txtInput');
-      var btnSpeak = document.querySelector('#btnSpeak');
-      var synth = window.speechSynthesis;
-      var weeks = {
-        week1: ["friend", "neighbor"]
-      };
 
-      function populateWeekList() {
-        var sel = document.getElementById('selectWeek');
-        for (const k of Object.keys(weeks)) {
-          var opt = document.createElement('option');
-          opt.value = k;
-          opt.innerHTML = k;
-          sel.appendChild(opt);
-        }
+<head>
+  <meta charset="utf-8">
+  <title>Trick Words Practice</title>
+  <style>
+    #history {
+      text-transform: uppercase;
+    }
+    .fail {
+      color: red;
+    }
+    .success {
+      color: green;
+    }
+  </style>
+  <script type="text/javascript">
+    var weeks = {
+      week1: ["friend", "neighbor"],
+      week2: ["happy"]
+    };
+    var currentWords = [];
+    var currentWordsIndex = 0;
+    var currentWord = "";
+    var currentAttempt = "";
+
+    function populateWeekList(sel) {
+      for (const k of Object.keys(weeks)) {
+        var opt = document.createElement('option');
+        opt.value = k;
+        opt.innerHTML = k;
+        sel.appendChild(opt);
       }
+    }
 
-      document.addEventListener("DOMContentLoaded", function() {
-        populateWeekList();
-      
-        btnSpeak.addEventListener('click', ()=> {
-          var toSpeak = new SpeechSynthesisUtterance(txtInput.textContent);
-          synth.speak(toSpeak);
-        });
+    function restartCurrentWord() {
+      currentWord = currentWords[currentWordsIndex];
+      currentAttempt = "";
+      document.getElementById('history').prepend(document.createElement('div'));
+    }
 
-        document.addEventListener("keypress", function onEvent(event) {
-          console.log(event.key);
-        });
-      }, { once: true });
-    </script>
-  </head>
-  <body>
-    <p id="txtInput">Speak this text</p>
-    <button id='btnSpeak'>Speak!</button>
-    <select name="selectWeek" id="selectWeek">
-    </select>
-  </body>
+    function selectWeek(value) {
+      var words = weeks[value];
+      if (!words) {
+        return;
+      }
+      console.log("selected words: ", words);
+      currentWords = words;
+      currentWordsIndex = 0;
+      restartCurrentWord();
+    }
+
+    function nextWord() {
+      currentWordsIndex = (currentWordsIndex + 1) % currentWords.length;
+      restartCurrentWord();
+    }
+
+    function tryLetter(key) {
+      currentAttempt += key;
+      var workspace = document.getElementById('history').firstChild;
+      if (!workspace) {
+        return;  // Ignore keystokes before a word is selected.
+      }
+      // Was the guess wrong?
+      if (!currentWord.startsWith(currentAttempt)) {
+        var failLetter = document.createElement('span');
+        failLetter.textContent = key;
+        failLetter.classList.add("fail");
+        workspace.appendChild(failLetter);
+        restartCurrentWord();
+        return;
+      }
+      // The guess was correct.
+      workspace.innerHTML = currentAttempt;
+      if (currentWord === currentAttempt) {
+        // Word complete.
+        // TODO: animation?
+        workspace.classList.add("success");
+        nextWord();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var sel = document.getElementById('selectWeek');
+      sel.addEventListener("change", (event) => {
+        selectWeek(event.target.value);
+      });
+      populateWeekList(sel);
+
+      var btnSpeak = document.getElementById('btnSpeak');
+      btnSpeak.addEventListener('click', () => {
+        var toSpeak = new SpeechSynthesisUtterance(currentWord || "Select a week to begin.");
+        window.speechSynthesis.speak(toSpeak);
+      });
+
+      document.addEventListener("keypress", function onEvent(event) {
+        // TODO: ignore ENTER and other keys
+        tryLetter(event.key.toLowerCase());
+      });
+    }, { once: true });
+  </script>
+</head>
+
+<body>
+  <button id="btnSpeak">Speak!</button>
+  <select name="selectWeek" id="selectWeek">
+    <option value="" selected disabled> -- select a week -- </option>
+  </select>
+  <div id="history"></div>
+</body>
+
 </html>
