@@ -81,6 +81,14 @@
       }
     }
 
+    function isLetter(k) {
+      if (k.length != 1) {
+        return false;
+      }
+      let n = k.charCodeAt(0);
+      return (n >= 65 && n < 91) || (n >= 97 && n < 123);
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       var sel = document.getElementById('selectWeek');
       sel.addEventListener("change", (event) => {
@@ -95,8 +103,9 @@
       });
 
       document.addEventListener("keypress", function onEvent(event) {
-        // TODO: ignore ENTER and other keys
-        tryLetter(event.key.toLowerCase());
+        if (isLetter(event.key)) {
+          tryLetter(event.key.toLowerCase());
+        }
       });
     }, { once: true });
   </script>
