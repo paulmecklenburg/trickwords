@@ -13,6 +13,7 @@
       padding: 5px;
       border: solid;
       border-radius: 12px;
+      font-size: 24px;
     }
 
     .fail {
@@ -42,8 +43,12 @@
   </style>
   <script type="text/javascript">
     var weeks = {
-      week1: ["friend", "neighbor"],
-      week2: ["happy"]
+      gr2u14wk1: ["Wednesday", "Thursday", "Saturday"],
+      gr2u14wk2: ["bought", "brought", "piece"],
+      gr2u15wk1: ["January", "February", "July"],
+      gr2u15wk2: ["enough", "special", "December"],
+      gr2u16wk1: ["August", "laugh", "daugher"],
+      gr2u17wk1: ["trouble", "couple", "young"]
     };
     var currentWords = [];
     var currentWordsIndex = 0;
@@ -60,7 +65,8 @@
     }
 
     function restartCurrentWord() {
-      currentWord = currentWords[currentWordsIndex];
+      // TODO: Change to require correct capitalization instead of always using lower case.
+      currentWord = currentWords[currentWordsIndex].toLowerCase();
       currentAttempt = "";
       document.getElementById('history').prepend(document.createElement('div'));
     }
