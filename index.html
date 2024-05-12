@@ -62,12 +62,14 @@
     var currentWordsIndex = 0;
     var currentWord = "";
     var currentAttempt = "";
+    var voices = [];
+    var currentVoice;
 
     function populateWeekList(sel) {
       for (const k of Object.keys(weeks)) {
         var opt = document.createElement('option');
         opt.value = k;
-        opt.innerHTML = k;
+        opt.textContent = k;
         sel.appendChild(opt);
       }
     }
@@ -79,9 +81,16 @@
       document.getElementById('history').prepend(document.createElement('div'));
     }
 
-    function speakWord() {
-      var toSpeak = new SpeechSynthesisUtterance(currentWord || "select a week to begin");
+    function speakArg(phrase) {
+      var toSpeak = new SpeechSynthesisUtterance(phrase);
+      if (currentVoice) {
+        toSpeak.voice = currentVoice;
+      }
       window.speechSynthesis.speak(toSpeak);
+    }
+
+    function speakWord() {
+      speakArg(currentWord || "select a week to begin");
     }
 
     function selectWeek(value) {
@@ -135,12 +144,50 @@
       return (n >= 65 && n < 91) || (n >= 97 && n < 123);
     }
 
+    function updateVoiceList() {
+      console.log("updateVoiceList");
+      voices = window.speechSynthesis.getVoices();
+      var sel = document.getElementById('selectVoice');
+      sel.replaceChildren();
+      for (let i = 0; i < voices.length; i++) {
+        var voice = voices[i];
+        console.log(`voice: ${voices[i].name} (${voices[i].lang})`);
+        if (voice.lang != "en-US") {
+          continue;
+        }
+        var opt = document.createElement("option");
+        opt.value = voice.name;
+        opt.textContent = voice.name;
+        sel.appendChild(opt);
+      }
+    }
+
+    function selectVoice(name) {
+      for (let i = 0; i < voices.length; i++) {
+        var voice = voices[i];
+        if (voice.name == name) {
+          currentVoice = voice;
+          break;
+        }
+      }
+      speakArg("voice test. neighbor, pull, full.");
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
-      var sel = document.getElementById('selectWeek');
+      var sel = document.getElementById("selectWeek");
       sel.addEventListener("change", (event) => {
         selectWeek(event.target.value);
       });
       populateWeekList(sel);
+
+      sel = document.getElementById("selectVoice");
+      sel.addEventListener("change", (event) => {
+        selectVoice(event.target.value);
+      });
+      window.speechSynthesis.addEventListener("voiceschanged", () => {
+        updateVoiceList();
+      });
+      updateVoiceList();
 
       var btnSpeak = document.getElementById('btnSpeak');
       btnSpeak.addEventListener('click', () => {
@@ -157,6 +204,7 @@
 </head>
 
 <body>
+  <select name="selectVoice" id="selectVoice"></select>
   <select name="selectWeek" id="selectWeek">
     <option value="" selected disabled> -- select a week -- </option>
   </select>
