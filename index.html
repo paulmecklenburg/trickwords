@@ -7,12 +7,37 @@
   <style>
     #history {
       text-transform: uppercase;
+      margin-top: 16px;
+      border-width: 1px;
+      border-color: black;
+      padding: 5px;
+      border: solid;
+      border-radius: 12px;
     }
+
     .fail {
       color: red;
     }
+
     .success {
       color: green;
+    }
+
+    button,
+    select {
+      background-color: #04AA6D;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 24px;
+      border-radius: 12px;
+    }
+
+    body {
+      margin: 24px;
     }
   </style>
   <script type="text/javascript">
@@ -118,10 +143,10 @@
 </head>
 
 <body>
-  <button id="btnSpeak">Speak!</button>
   <select name="selectWeek" id="selectWeek">
     <option value="" selected disabled> -- select a week -- </option>
   </select>
+  <button id="btnSpeak">Say Word Again</button>
   <div id="history"></div>
 </body>
 
